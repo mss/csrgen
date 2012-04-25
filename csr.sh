@@ -11,9 +11,6 @@
 # 2. Redistributions in binary form must reproduce the above copyright
 #    notice, this list of conditions and the following disclaimer in the
 #    documentation and/or other materials provided with the distribution.
-# 3. Neither the name of the author nor the names of its contributors may
-#    be used to endorse or promote products derived from this software
-#    without specific prior written permission.
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
@@ -28,6 +25,12 @@
 #
 # ChangeLog:
 # Mon May 23 00:14:37 BRT 2005 - evaldo - Initial Release
+# Thu Nov  3 10:11:51 GMT 2005 - chrisc - $HOME removed so that key and csr
+#                                         are generated in the current directory
+# Wed Nov 16 10:42:42 GMT 2005 - chrisc - Updated to match latest version on
+#                                         the CAcert wiki, rev #73
+#                                         http://wiki.cacert.org/wiki/VhostTaskForce 
+
 
 # be safe about permissions
 LASTUMASK=`umask`
@@ -83,7 +86,7 @@ cat <<EOF >> $CONFIG
  [ new_oids ]
  [ req ]
  default_days            = 730            # how long to certify for
- default_keyfile         = $HOME/${HOST}_privatekey.pem
+ default_keyfile         = ${HOST}_privatekey.pem
  distinguished_name      = req_distinguished_name
  encrypt_key             = no
  string_mask = nombstr
@@ -108,14 +111,17 @@ fi
 echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 echo "Running OpenSSL..."
-openssl req -batch -config $CONFIG -newkey rsa:2048 -out $HOME/${HOST}_csr.pem
+# The first one doesn't work, the second one does:
+#openssl req -batch -config $CONFIG -newkey rsa -out ${HOST}_csr.pem
+openssl req -batch -config $CONFIG -newkey rsa:2048 -out ${HOST}_csr.pem
+
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${HOST}_server.pem"
 echo
-cat $HOME/${HOST}_csr.pem
+cat ${HOST}_csr.pem
 echo
-echo The Certificate request is also available in $HOME/${HOST}_csr.pem
-echo The Private Key is stored in $HOME/${HOST}_privatekey.pem
+echo The Certificate request is also available in ${HOST}_csr.pem
+echo The Private Key is stored in ${HOST}_privatekey.pem
 echo
 
 rm $CONFIG
