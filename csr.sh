@@ -51,9 +51,9 @@ echo "This script was designed to suit the request format needed by"
 echo "the CAcert Certificate Authority. www.CAcert.org"
 echo
 
-printf "Short Hostname (ie. imap big_srv www2): "
+printf "Short Hostname (eg. imap big_srv www2): "
 read HOST
-printf "FQDN/CommonName (ie. www.example.com) : "
+printf "FQDN/CommonName (eg. www.example.com) : "
 read COMMONNAME
 
 echo "Type SubjectAltNames for the certificate, one per line. Enter a blank line to finish"
