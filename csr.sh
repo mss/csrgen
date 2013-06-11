@@ -127,7 +127,7 @@ echo "Running OpenSSL..."
 openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -out ${COMMONNAME}.csr
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
-echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}_server.pem"
+echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}.pem"
 echo
 cat ${COMMONNAME}.csr
 echo
