@@ -40,7 +40,7 @@ umask 077
 RANDOMFILE=$HOME/.rnd
 
 # create a config file for openssl
-CONFIG=`mktemp -q /tmp/openssl-conf.XXXXXXXX`
+CONFIG=`mktemp -q /tmp/openssl.$USER.XXXXXXXX.conf`
 if [ ! $? -eq 0 ]; then
     echo "Could not create temporary config file. exiting"
     exit 1
