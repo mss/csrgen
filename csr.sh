@@ -52,9 +52,7 @@ echo "This script was designed to suit the request format needed by"
 echo "the CAcert Certificate Authority. www.CAcert.org"
 echo
 
-printf "Short Hostname (eg. imap big_srv www2): "
-read HOST
-printf "FQDN/CommonName (eg. www.example.com) : "
+printf "FQDN/CommonName (eg. www.example.com): "
 read COMMONNAME
 
 echo "Type SubjectAltNames for the certificate, one per line. Enter a blank line to finish"
@@ -87,7 +85,7 @@ cat <<EOF >> $CONFIG
  [ new_oids ]
  [ req ]
  default_days            = 730            # how long to certify for
- default_keyfile         = ${HOST}_privatekey.pem
+ default_keyfile         = ${COMMONNAME}_privatekey.pem
  distinguished_name      = req_distinguished_name
  encrypt_key             = no
  string_mask = nombstr
@@ -113,16 +111,16 @@ echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 echo "Running OpenSSL..."
 # The first one doesn't work, the second one does:
-#openssl req -batch -config $CONFIG -newkey rsa -out ${HOST}_csr.pem
-openssl req -batch -config $CONFIG -newkey rsa:2048 -out ${HOST}_csr.pem
+#openssl req -batch -config $CONFIG -newkey rsa -out ${COMMONNAME}_csr.pem
+openssl req -batch -config $CONFIG -newkey rsa:2048 -out ${COMMONNAME}_csr.pem
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
-echo "When you receive your certificate, you 'should' name it something like ${HOST}_server.pem"
+echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}_server.pem"
 echo
-cat ${HOST}_csr.pem
+cat ${COMMONNAME}_csr.pem
 echo
-echo The Certificate request is also available in ${HOST}_csr.pem
-echo The Private Key is stored in ${HOST}_privatekey.pem
+echo The Certificate request is also available in ${COMMONNAME}_csr.pem
+echo The Private Key is stored in ${COMMONNAME}_privatekey.pem
 echo
 
 #restore umask
