@@ -31,6 +31,7 @@
 #                                         the CAcert wiki, rev #73
 #                                         http://wiki.cacert.org/wiki/VhostTaskForce 
 
+KEYSIZE=2048
 
 # be safe about permissions
 LASTUMASK=`umask`
@@ -110,9 +111,7 @@ fi
 echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 echo "Running OpenSSL..."
-# The first one doesn't work, the second one does:
-#openssl req -batch -config $CONFIG -newkey rsa -out ${COMMONNAME}.csr
-openssl req -batch -config $CONFIG -newkey rsa:2048 -out ${COMMONNAME}.csr
+openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -out ${COMMONNAME}.csr
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}_server.pem"
