@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # csr.sh: Certificate Signing Request Generator
 # Copyright(c) 2005 Evaldo Gardenali <evaldo@gardenali.biz>
 # All rights reserved.
@@ -45,6 +45,7 @@ if [ ! $? -eq 0 ]; then
     echo "Could not create temporary config file. exiting"
     exit 1
 fi
+trap "rm -f '$CONFIG'" EXIT
 
 echo "Private Key and Certificate Signing Request Generator"
 echo "This script was designed to suit the request format needed by"
@@ -123,8 +124,6 @@ echo
 echo The Certificate request is also available in ${HOST}_csr.pem
 echo The Private Key is stored in ${HOST}_privatekey.pem
 echo
-
-rm $CONFIG
 
 #restore umask
 umask $LASTUMASK
