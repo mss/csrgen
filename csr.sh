@@ -31,6 +31,13 @@
 #                                         the CAcert wiki, rev #73
 #                                         http://wiki.cacert.org/wiki/VhostTaskForce 
 
+CSR_COUNTRY="XX"
+CSR_STATE="XX"
+CSR_LOCATION="Some City"
+CSR_COMPANY="Snake Oil, Inc."
+CSR_FIRSTNAME="John"
+CSR_LASTNAME="Doe"
+
 KEYSIZE=2048
 
 # be safe about permissions
@@ -100,6 +107,13 @@ fi
 cat <<EOF >> $CONFIG
  [ req_distinguished_name ]
  commonName              = $COMMONNAME
+ countryName             = $CSR_COUNTRY
+ stateOrProvinceName     = $CSR_STATE
+ localityName            = $CSR_LOCATION
+ organizationName        = $CSR_COMPANY
+ name                    = $CSR_FIRSTNAME $CSR_LASTNAME
+ surname                 = $CSR_LASTNAME
+ givenName               = $CSR_FIRSTNAME
  [ v3_req ]
 EOF
 
