@@ -83,6 +83,7 @@ fi
 
 cat <<EOF >> $CONFIG
  oid_section             = new_oids
+ prompt                  = no
  [ new_oids ]
  [ req ]
  default_days            = 730            # how long to certify for
@@ -98,9 +99,7 @@ fi
 
 cat <<EOF >> $CONFIG
  [ req_distinguished_name ]
- commonName              = Common Name (eg, YOUR name)
- commonName_default      = $COMMONNAME
- commonName_max          = 64
+ commonName              = $COMMONNAME
  [ v3_req ]
 EOF
 
