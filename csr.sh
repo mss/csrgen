@@ -31,12 +31,12 @@
 #                                         the CAcert wiki, rev #73
 #                                         http://wiki.cacert.org/wiki/VhostTaskForce 
 
-CSR_COUNTRY="XX"
-CSR_STATE="XX"
-CSR_LOCATION="Some City"
-CSR_COMPANY="Snake Oil, Inc."
-CSR_FIRSTNAME="John"
-CSR_LASTNAME="Doe"
+CSR_COUNTRY="${1:-XX}"
+CSR_STATE="${2:-XX}"
+CSR_LOCATION="${3:-Some City}"
+CSR_COMPANY="${4:-Snake Oil, Inc.}"
+CSR_FIRSTNAME="${5:-John}"
+CSR_LASTNAME="${6:-Doe}"
 
 KEYSIZE=2048
 
