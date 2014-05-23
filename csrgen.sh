@@ -121,13 +121,15 @@ if [ "`uname -s`" = "HP-UX" ]; then
     echo " RANDFILE                = $RANDOMFILE" >> $CONFIG
 fi
 
+mkdir -p data
+
 cat <<EOF >> $CONFIG
  oid_section             = new_oids
  prompt                  = no
  [ new_oids ]
  [ req ]
  default_days            = 730            # how long to certify for
- default_keyfile         = ${COMMONNAME}.key
+ default_keyfile         = data/${COMMONNAME}.key
  distinguished_name      = req_distinguished_name
  encrypt_key             = no
  string_mask = nombstr
