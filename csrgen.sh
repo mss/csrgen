@@ -31,14 +31,50 @@
 #                                         the CAcert wiki, rev #73
 #                                         http://wiki.cacert.org/wiki/VhostTaskForce 
 
-CSR_COUNTRY="${1:-XX}"
-CSR_STATE="${2:-XX}"
-CSR_LOCATION="${3:-Some City}"
-CSR_COMPANY="${4:-Snake Oil, Inc.}"
-CSR_FIRSTNAME="${5:-John}"
-CSR_LASTNAME="${6:-Doe}"
+usage()
+{
+  cat <<EOF
+$( basename -- $( readlink -f $0 )) [OPTIONS] -r COMMONNAME
+  -c  CSR_COUNTRY     [XX]
+  -s  CSR_STATE       [XX]
+  -l  CSR_LOCATION    [Some City]
+  -b  CSR_COMPANY     [Snake Oil, Inc.]
+  -f  CSR_FIRSTNAME   [John]
+  -n  CSR_LASTNAME    [Doe]
+  -k  KEYSIZE         [2048]
+  -r  COMMONNAME      []
+EOF
+}
 
-KEYSIZE=2048
+while getopts hc:s:l:b:f:n:k:r: OPT; do
+  case "${OPT}" in
+    h) usage; exit 0;;
+    c) CSR_COUNTRY="${OPTARG}";;
+    s) CSR_STATE="${OPTARG}";;
+    l) CSR_LOCATION="${OPTARG}";;
+    b) CSR_COMPANY="${OPTARG}";;
+    f) CSR_FIRSTNAME="${OPTARG}";;
+    n) CSR_LASTNAME="${OPTARG}";;
+    k) KEYSIZE="${OPTARG}";;
+    r) COMMONNAME="${OPTARG}";;
+  esac
+done
+shift $(( $OPTIND - 1 ))
+
+[ -n "${CSR_COUNTRY}" ]   || CSR_COUNTRY="XX"
+[ -n "${CSR_STATE}" ]     || CSR_STATE="XX"
+[ -n "${CSR_LOCATION}" ]  || CSR_LOCATION="Some City"
+[ -n "${CSR_COMPANY}" ]   || CSR_COMPANY="Snake Oil, Inc."
+[ -n "${CSR_FIRSTNAME}" ] || CSR_FIRSTNAME="John"
+[ -n "${CSR_LASTNAME}" ]  || CSR_LASTNAME="Doe"
+[ -n "${KEYSIZE}" ]       || KEYSIZE=2048
+
+[ -n "${COMMONNAME}" ] || {
+  printf "COMMONNAME not set\n\n"
+  usage
+  exit 1
+}
+
 
 # be safe about permissions
 LASTUMASK=`umask`
@@ -60,14 +96,11 @@ echo "This script was designed to suit the request format needed by"
 echo "the CAcert Certificate Authority. www.CAcert.org"
 echo
 
-printf "FQDN/CommonName (eg. www.example.com): "
-read COMMONNAME
-
 echo "Type SubjectAltNames for the certificate, one per line. Enter a blank line to finish"
 SAN=1        # bogus value to begin the loop
 SANAMES=""   # sanitize
 while [ ! "$SAN" = "" ]; do
-    printf "SubjectAltName: DNS:"
+    printf "SubjectAltName: DNS: "
     read SAN
     if [ "$SAN" = "" ]; then break; fi # end of input
     if [ "$SANAMES" = "" ]; then
@@ -124,12 +157,13 @@ fi
 echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 echo "Running OpenSSL..."
-openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -out ${COMMONNAME}.csr
+install -d data
+openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -out data/${COMMONNAME}.csr
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}.pem"
 echo
-cat ${COMMONNAME}.csr
+cat data/${COMMONNAME}.csr
 echo
 echo The Certificate request is also available in ${COMMONNAME}.csr
 echo The Private Key is stored in ${COMMONNAME}.key
