@@ -67,7 +67,7 @@ shift $(( $OPTIND - 1 ))
 [ -n "${CSR_COMPANY}" ]   || CSR_COMPANY="Snake Oil, Inc."
 [ -n "${CSR_FIRSTNAME}" ] || CSR_FIRSTNAME="John"
 [ -n "${CSR_LASTNAME}" ]  || CSR_LASTNAME="Doe"
-[ -n "${KEYSIZE}" ]       || KEYSIZE=2048
+[ -n "${KEYSIZE}" ]       || KEYSIZE=4096
 
 [ -n "${COMMONNAME}" ] || {
   printf "COMMONNAME not set\n\n"
@@ -160,7 +160,7 @@ echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 echo "Running OpenSSL..."
 install -d data
-openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -out data/${COMMONNAME}.csr
+openssl req -batch -sha512 -config $CONFIG -newkey rsa:$KEYSIZE -out data/${COMMONNAME}.csr
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}.pem"
