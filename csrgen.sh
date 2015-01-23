@@ -160,7 +160,7 @@ echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 echo "Running OpenSSL..."
 install -d data
-openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -out data/${COMMONNAME}.csr
+openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -sha256 -out data/${COMMONNAME}.csr
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}.pem"
