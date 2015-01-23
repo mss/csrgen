@@ -9,7 +9,7 @@ Usage
 
 You don't want to use it like this:
 
-    curl https://raw.github.com/mss/csrgen/master/csrgen.sh | bash
+    curl -L https://raw.github.com/mss/csrgen/master/csrgen.sh | bash
 
 It will drop the PEM encoded key (extension .key) and CSR (extension .csr) in the current directory.
 
