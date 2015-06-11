@@ -78,56 +78,36 @@ shift $(( $OPTIND - 1 ))
 }
 
 
+echo "Private Key and Certificate Signing Request Generator"
+echo "This script was originally designed to suit the request format needed by"
+echo "the CAcert Certificate Authority. www.CAcert.org"
+echo
+
 # be safe about permissions
 LASTUMASK=`umask`
 umask 077
 
-# OpenSSL for HPUX needs a random file
-RANDOMFILE=$HOME/.rnd
-
 # create a config file for openssl
-CONFIG=`mktemp -q /tmp/openssl.$USER.XXXXXXXX.conf`
+CONFIG=$(mktemp -q ${TMPDIR:-/tmp}/csrgen.$USER.$$.XXXXXXXX.conf)
 if [ ! $? -eq 0 ]; then
     echo "Could not create temporary config file. exiting"
     exit 1
 fi
 trap "rm -f '$CONFIG'" EXIT
 
-echo "Private Key and Certificate Signing Request Generator"
-echo "This script was designed to suit the request format needed by"
-echo "the CAcert Certificate Authority. www.CAcert.org"
-echo
-
 # Config File Generation
-
-cat <<EOF > $CONFIG
-# -------------- BEGIN custom openssl.cnf -----
- HOME                    = $HOME
-EOF
-
-if [ "`uname -s`" = "HP-UX" ]; then
-    echo " RANDFILE                = $RANDOMFILE" >> $CONFIG
-fi
-
-mkdir -p data
-
 cat <<EOF >> $CONFIG
- oid_section             = new_oids
- prompt                  = no
+ HOME = $HOME
+ oid_section = new_oids
+ prompt = no
  [ new_oids ]
  [ req ]
- default_days            = 730            # how long to certify for
- default_keyfile         = data/${COMMONNAME}.key
- distinguished_name      = req_distinguished_name
- encrypt_key             = no
+ default_days = 730
+ default_keyfile = data/${COMMONNAME}.key
+ distinguished_name = req_distinguished_name
+ encrypt_key = no
  string_mask = nombstr
-EOF
-
-if [ ! "$SANAMES" = "" ]; then
-    echo "req_extensions = v3_req # Extensions to add to certificate request" >> $CONFIG
-fi
-
-cat <<EOF >> $CONFIG
+ ${SANAMES:+req_extensions = v3_req}
  [ req_distinguished_name ]
  commonName              = $COMMONNAME
  countryName             = $CSR_COUNTRY
@@ -138,13 +118,8 @@ cat <<EOF >> $CONFIG
  surname                 = $CSR_SURNAME
  givenName               = $CSR_GIVENNAME
  [ v3_req ]
+ ${SANAMES:+subjectAltName = $SANAMES}
 EOF
-
-if [ ! "$SANAMES" = "" ]; then
-    echo "subjectAltName=$SANAMES" >> $CONFIG
-fi
-
-echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
 install -d data
 openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -sha256 -out data/${COMMONNAME}.csr
