@@ -55,7 +55,7 @@ $( basename -- $( readlink -f $0 )) [OPTIONS] -n COMMONNAME
 EOF
 }
 
-while getopts hO:G:N:L:S:C:k:n: OPT; do
+while getopts hO:G:N:L:S:C:k:n:a: OPT; do
   case "${OPT}" in
     h) usage; exit 0;;
     O) CSR_ORGANIZATION="${OPTARG}";;
@@ -66,6 +66,7 @@ while getopts hO:G:N:L:S:C:k:n: OPT; do
     C) CSR_COUNTRY="${OPTARG}";;
     k) KEYSIZE="${OPTARG}";;
     n) COMMONNAME="${OPTARG}";;
+    a) SANAMES="${SANAMES:+$SANAMES,}DNS:${OPTARG}";;
   esac
 done
 shift $(( $OPTIND - 1 ))
@@ -96,20 +97,6 @@ echo "Private Key and Certificate Signing Request Generator"
 echo "This script was designed to suit the request format needed by"
 echo "the CAcert Certificate Authority. www.CAcert.org"
 echo
-
-echo "Type SubjectAltNames for the certificate, one per line. Enter a blank line to finish"
-SAN=1        # bogus value to begin the loop
-SANAMES=""   # sanitize
-while [ ! "$SAN" = "" ]; do
-    printf "SubjectAltName: DNS: "
-    read SAN
-    if [ "$SAN" = "" ]; then break; fi # end of input
-    if [ "$SANAMES" = "" ]; then
-        SANAMES="DNS:$SAN"
-    else
-        SANAMES="$SANAMES,DNS:$SAN"
-    fi
-done
 
 # Config File Generation
 
@@ -159,17 +146,19 @@ fi
 
 echo "# -------------- END custom openssl.cnf -----" >> $CONFIG
 
-echo "Running OpenSSL..."
 install -d data
 openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -sha256 -out data/${COMMONNAME}.csr
+
+openssl req -in data/${COMMONNAME}.csr -noout -text
+echo
 
 echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}.pem"
 echo
 cat data/${COMMONNAME}.csr
 echo
-echo The Certificate request is also available in ${COMMONNAME}.csr
-echo The Private Key is stored in ${COMMONNAME}.key
+echo The Certificate request is also available in data/${COMMONNAME}.csr
+echo The Private Key is stored in data/${COMMONNAME}.key
 echo
 
 #restore umask
