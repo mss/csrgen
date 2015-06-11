@@ -30,6 +30,7 @@
 # Wed Nov 16 10:42:42 GMT 2005 - chrisc - Updated to match latest version on
 #                                         the CAcert wiki, rev #73
 #                                         http://wiki.cacert.org/wiki/VhostTaskForce 
+set -e -o pipefail
 
 CSR_ORGANIZATION="Snake Oil, Inc."
 CSR_GIVENNAME="John"
