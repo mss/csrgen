@@ -31,43 +31,44 @@
 #                                         the CAcert wiki, rev #73
 #                                         http://wiki.cacert.org/wiki/VhostTaskForce 
 
+CSR_ORGANIZATION="Snake Oil, Inc."
+CSR_GIVENNAME="John"
+CSR_SURNAME="Doe"
+CSR_LOCATION="Some City"
+CSR_STATE="XX"
+CSR_COUNTRY="XX"
+
+KEYSIZE=2048
+
 usage()
 {
   cat <<EOF
-$( basename -- $( readlink -f $0 )) [OPTIONS] -r COMMONNAME
-  -c  CSR_COUNTRY     [XX]
-  -s  CSR_STATE       [XX]
-  -l  CSR_LOCATION    [Some City]
-  -b  CSR_COMPANY     [Snake Oil, Inc.]
-  -f  CSR_FIRSTNAME   [John]
-  -n  CSR_LASTNAME    [Doe]
-  -k  KEYSIZE         [2048]
-  -r  COMMONNAME      []
+$( basename -- $( readlink -f $0 )) [OPTIONS] -n COMMONNAME
+  -O  CSR_ORGANIZATION [Snake Oil, Inc.]
+  -G  CSR_GIVENNAME    [John]
+  -N  CSR_SURNAME      [Doe]
+  -L  CSR_LOCATION     [Some City]
+  -S  CSR_STATE        [XX]
+  -C  CSR_COUNTRY      [XX]
+  -k  KEYSIZE          [2048]
+  -n  COMMONNAME       []
 EOF
 }
 
-while getopts hc:s:l:b:f:n:k:r: OPT; do
+while getopts hO:G:N:L:S:C:k:n: OPT; do
   case "${OPT}" in
     h) usage; exit 0;;
-    c) CSR_COUNTRY="${OPTARG}";;
-    s) CSR_STATE="${OPTARG}";;
-    l) CSR_LOCATION="${OPTARG}";;
-    b) CSR_COMPANY="${OPTARG}";;
-    f) CSR_FIRSTNAME="${OPTARG}";;
-    n) CSR_LASTNAME="${OPTARG}";;
+    O) CSR_ORGANIZATION="${OPTARG}";;
+    G) CSR_GIVENNAME="${OPTARG}";;
+    N) CSR_SURNAME="${OPTARG}";;
+    L) CSR_LOCATION="${OPTARG}";;
+    S) CSR_STATE="${OPTARG}";;
+    C) CSR_COUNTRY="${OPTARG}";;
     k) KEYSIZE="${OPTARG}";;
-    r) COMMONNAME="${OPTARG}";;
+    n) COMMONNAME="${OPTARG}";;
   esac
 done
 shift $(( $OPTIND - 1 ))
-
-[ -n "${CSR_COUNTRY}" ]   || CSR_COUNTRY="XX"
-[ -n "${CSR_STATE}" ]     || CSR_STATE="XX"
-[ -n "${CSR_LOCATION}" ]  || CSR_LOCATION="Some City"
-[ -n "${CSR_COMPANY}" ]   || CSR_COMPANY="Snake Oil, Inc."
-[ -n "${CSR_FIRSTNAME}" ] || CSR_FIRSTNAME="John"
-[ -n "${CSR_LASTNAME}" ]  || CSR_LASTNAME="Doe"
-[ -n "${KEYSIZE}" ]       || KEYSIZE=2048
 
 [ -n "${COMMONNAME}" ] || {
   printf "COMMONNAME not set\n\n"
@@ -145,10 +146,10 @@ cat <<EOF >> $CONFIG
  countryName             = $CSR_COUNTRY
  stateOrProvinceName     = $CSR_STATE
  localityName            = $CSR_LOCATION
- organizationName        = $CSR_COMPANY
- name                    = $CSR_FIRSTNAME $CSR_LASTNAME
- surname                 = $CSR_LASTNAME
- givenName               = $CSR_FIRSTNAME
+ organizationName        = $CSR_ORGANIZATION
+ name                    = $CSR_GIVENNAME $CSR_SURNAME
+ surname                 = $CSR_SURNAME
+ givenName               = $CSR_GIVENNAME
  [ v3_req ]
 EOF
 
