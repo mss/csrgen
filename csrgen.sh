@@ -75,11 +75,14 @@ while getopts hO:G:N:L:S:C:k:n:a: OPT; do
 done
 shift $(( $OPTIND - 1 ))
 
-[ -n "${COMMONNAME}" ] || {
+if [[ -z "${COMMONNAME}" ]]; then
   printf "COMMONNAME not set\n\n"
   usage
   exit 1
-}
+fi
+if [[ -n "${SANAMES}" ]]; then
+  SANAMES="DNS:${COMMONNAME},${SANAMES}"
+fi
 
 
 echo "Private Key and Certificate Signing Request Generator"
