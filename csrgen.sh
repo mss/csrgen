@@ -53,6 +53,7 @@ $( basename -- $( readlink -f $0 )) [OPTIONS] -n COMMONNAME
   -C  CSR_COUNTRY      [XX]
   -k  KEYSIZE          [2048]
   -n  COMMONNAME       []
+  -a  SANAME           []
 EOF
 }
 
