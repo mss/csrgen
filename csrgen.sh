@@ -134,7 +134,6 @@ openssl req -batch -config $CONFIG -newkey rsa:$KEYSIZE -sha256 -out data/${COMM
 openssl req -in data/${COMMONNAME}.csr -noout -text
 echo
 
-echo "Copy the following Certificate Request and paste into CAcert website to obtain a Certificate."
 echo "When you receive your certificate, you 'should' name it something like ${COMMONNAME}.pem"
 echo
 cat data/${COMMONNAME}.csr
